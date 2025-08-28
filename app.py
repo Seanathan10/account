@@ -23,7 +23,6 @@ from reportlab.platypus import (
 )
 from reportlab.lib.styles import getSampleStyleSheet
 
-
 app = Flask(__name__)
 init_db()
 
@@ -32,7 +31,6 @@ init_db()
 def index():
     transactions = get_transactions()
     return render_template("index.html", transactions=transactions, categories=CATEGORY_TAGS)
-
 
 
 @app.route("/add", methods=["POST"])
@@ -44,7 +42,6 @@ def add():
         amount = float(data["amount"])
         tx_type = data.get("type", "expense")
         amount = abs(amount) if tx_type == "income" else -abs(amount)
-
         category = data.get("category") or categorize(description)
         tx_id = add_transaction(date, description, amount, category)
         return jsonify(
@@ -61,7 +58,6 @@ def add():
     amount = float(request.form["amount"])
     tx_type = request.form.get("type", "expense")
     amount = abs(amount) if tx_type == "income" else -abs(amount)
-
     category = request.form.get("category") or categorize(description)
     add_transaction(date, description, amount, category)
     return redirect("/")
@@ -129,7 +125,6 @@ def import_csv():
         category = row.get("category") or categorize(description)
         add_transaction(date, description, amount, category)
     return redirect("/")
-
 
 
 @app.route("/delete/<int:tx_id>", methods=["DELETE"]) 
