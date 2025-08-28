@@ -22,7 +22,9 @@ def init_db():
     conn.close()
 
 
-def add_transaction(date: str, description: str, amount: float, category: str) -> None:
+def add_transaction(date: str, description: str, amount: float, category: str) -> int:
+    """Insert a transaction and return its database id."""
+
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     cur.execute(
@@ -30,7 +32,9 @@ def add_transaction(date: str, description: str, amount: float, category: str) -
         (date, description, amount, category),
     )
     conn.commit()
+    row_id = cur.lastrowid
     conn.close()
+    return row_id
 
 
 def get_transactions():
