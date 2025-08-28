@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, jsonify, send_file
 from io import BytesIO, StringIO
 import csv
 
+
 from database import (
     init_db,
     add_transaction,
@@ -130,6 +131,7 @@ def import_csv():
 def delete(tx_id: int):
     delete_transaction(tx_id)
     return ("", 204)
+
 
 
 if __name__ == "__main__":
