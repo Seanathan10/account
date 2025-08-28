@@ -37,6 +37,19 @@ def add_transaction(date: str, description: str, amount: float, category: str) -
     return row_id
 
 
+
+def get_transaction(tx_id: int):
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT id, date, description, amount, category FROM transactions WHERE id=?",
+        (tx_id,),
+    )
+    row = cur.fetchone()
+    conn.close()
+    return row
+
+
 def get_transactions():
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()

@@ -23,25 +23,32 @@ def teardown_module(module):
 
 
 def test_add_and_list():
-    add_transaction('2023-01-01', 'Coffee shop', 3.50, categorize('Coffee shop'))
-    add_transaction('2023-01-02', 'Uber ride', 12.00, categorize('Uber ride'))
+    add_transaction('2023-01-01', 'Coffee shop', -3.50, categorize('Coffee shop'))
+    add_transaction('2023-01-02', 'Uber ride', -12.00, categorize('Uber ride'))
     txs = get_transactions()
     assert len(txs) == 2
     assert txs[0][2] == 'Uber ride'
-    assert txs[0][4] == 'Transport'
+    assert txs[0][4] == 'Public transit costs'
 
 
 def test_categorize():
-    assert categorize('Morning coffee') == 'Food'
+    assert categorize('Morning coffee') == 'Dining out'
     assert categorize('Unknown purchase') == 'Uncategorized'
 
 
-def test_add_via_json():
+def test_add_via_json_and_invoice():
     client = flask_app.test_client()
-    resp = client.post('/add', json={'description': 'Book', 'amount': 10.0})
+    resp = client.post('/add', json={'description': 'Book', 'amount': 10.0, 'type': 'expense'})
     assert resp.status_code == 200
     data = resp.get_json()
     assert data['description'] == 'Book'
+    assert data['amount'] == -10.0
     assert data['category'] == 'Uncategorized'
     assert any(t[0] == data['id'] for t in get_transactions())
 
+    resp2 = client.post('/add', json={'description': 'Salary', 'amount': 100.0, 'type': 'income'})
+    assert resp2.get_json()['amount'] == 100.0
+
+    inv = client.get(f"/invoice/{data['id']}")
+    assert inv.status_code == 200
+    assert inv.headers['Content-Type'] == 'application/pdf'
