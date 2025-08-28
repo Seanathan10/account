@@ -24,6 +24,7 @@ def init_db():
 
 def add_transaction(date: str, description: str, amount: float, category: str) -> int:
     """Insert a transaction and return its database id."""
+
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     cur.execute(
@@ -36,6 +37,7 @@ def add_transaction(date: str, description: str, amount: float, category: str) -
     return row_id
 
 
+
 def get_transaction(tx_id: int):
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
@@ -46,6 +48,7 @@ def get_transaction(tx_id: int):
     row = cur.fetchone()
     conn.close()
     return row
+
 
 def get_transactions():
     conn = sqlite3.connect(DB_PATH)
@@ -65,3 +68,4 @@ def delete_transaction(tx_id: int) -> None:
     cur.execute("DELETE FROM transactions WHERE id=?", (tx_id,))
     conn.commit()
     conn.close()
+

@@ -12,6 +12,7 @@ The interface uses Tailwind CSS and JavaScript for a fast, modern experience tha
 - Sort columns in ascending or descending order with header arrows.
 - Over 150 keyword rules map common merchants to categories.
 
+
 ## Setup
 
 Install dependencies:

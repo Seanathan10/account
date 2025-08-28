@@ -10,6 +10,7 @@ from categorizer import categorize
 from app import app as flask_app
 
 
+
 def setup_module(module):
     if DB_PATH.exists():
         DB_PATH.unlink()
@@ -38,6 +39,7 @@ def test_categorize():
     assert categorize('AAA Insurance') == 'Insurance premiums'
 
 
+
 def test_add_via_json_and_invoice():
     client = flask_app.test_client()
     resp = client.post('/add', json={'description': 'Book', 'amount': 10.0, 'type': 'expense'})
@@ -63,3 +65,4 @@ def test_delete_transaction():
     del_resp = client.delete(f'/delete/{tx_id}')
     assert del_resp.status_code == 204
     assert all(t[0] != tx_id for t in get_transactions())
+

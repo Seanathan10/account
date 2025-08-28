@@ -1,3 +1,4 @@
+
 const txData = window.transactionsData.map(t => ({
   id: t[0],
   date: t[1],
@@ -45,6 +46,7 @@ function attachDelete(btn) {
 
 document.querySelectorAll('.delete-btn').forEach(attachDelete);
 
+
 document.getElementById('tx-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const form = e.target;
@@ -53,6 +55,7 @@ document.getElementById('tx-form').addEventListener('submit', async (e) => {
     description: form.description.value,
     amount: parseFloat(form.amount.value),
     type: form.type.value,
+
     category: form.category.value,
   };
   const resp = await fetch('/add', {
@@ -68,6 +71,7 @@ document.getElementById('tx-form').addEventListener('submit', async (e) => {
     tr.innerHTML = `\n      <td class="px-4 py-2 whitespace-nowrap">${tx.date}</td>\n      <td class="px-4 py-2 whitespace-nowrap">${tx.description}</td>\n      <td class="px-4 py-2 whitespace-nowrap">${tx.amount.toFixed(2)}</td>\n      <td class="px-4 py-2 whitespace-nowrap">${tx.category}</td>\n      <td class="px-4 py-2 whitespace-nowrap"><a href="/invoice/${tx.id}" target="_blank" class="text-blue-600">Invoice</a> <button data-id="${tx.id}" class="delete-btn text-red-600 ml-2">Delete</button></td>\n    `;
     tbody.prepend(tr);
     attachDelete(tr.querySelector('.delete-btn'));
+
     updateChart();
     form.reset();
   }
@@ -123,4 +127,5 @@ document.querySelectorAll('th[data-index]').forEach(th => {
 });
 
 updateSortIcons();
+
 
