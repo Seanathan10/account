@@ -7,6 +7,7 @@ from categorizer import categorize, CATEGORY_TAGS
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
+
 app = Flask(__name__)
 init_db()
 
@@ -15,6 +16,7 @@ init_db()
 def index():
     transactions = get_transactions()
     return render_template("index.html", transactions=transactions, categories=CATEGORY_TAGS)
+
 
 
 @app.route("/add", methods=["POST"])
@@ -26,6 +28,7 @@ def add():
         amount = float(data["amount"])
         tx_type = data.get("type", "expense")
         amount = abs(amount) if tx_type == "income" else -abs(amount)
+
         category = data.get("category") or categorize(description)
         tx_id = add_transaction(date, description, amount, category)
         return jsonify(
@@ -40,8 +43,10 @@ def add():
     date = request.form.get("date") or datetime.now().strftime("%Y-%m-%d")
     description = request.form["description"]
     amount = float(request.form["amount"])
+
     tx_type = request.form.get("type", "expense")
     amount = abs(amount) if tx_type == "income" else -abs(amount)
+
     category = request.form.get("category") or categorize(description)
     add_transaction(date, description, amount, category)
     return redirect("/")
@@ -64,6 +69,7 @@ def invoice(tx_id: int):
     p.save()
     buffer.seek(0)
     return send_file(buffer, as_attachment=True, download_name="invoice.pdf", mimetype="application/pdf")
+
 
 
 if __name__ == "__main__":

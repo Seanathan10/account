@@ -1,3 +1,4 @@
+
 const txData = window.transactionsData.map(t => ({
   id: t[0],
   date: t[1],
@@ -38,6 +39,7 @@ document.getElementById('tx-form').addEventListener('submit', async (e) => {
     description: form.description.value,
     amount: parseFloat(form.amount.value),
     type: form.type.value,
+
     category: form.category.value,
   };
   const resp = await fetch('/add', {
@@ -77,3 +79,4 @@ document.querySelectorAll('th[data-index]').forEach(th => {
     rows.forEach(r => tbody.appendChild(r));
   });
 });
+

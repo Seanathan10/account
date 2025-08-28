@@ -65,6 +65,7 @@ RULES = {
     "coffee": "Dining out",
     "grocery": "Groceries",
     "uber": "Public transit costs",
+
 }
 
 

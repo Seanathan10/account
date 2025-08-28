@@ -10,6 +10,7 @@ from categorizer import categorize
 from app import app as flask_app
 
 
+
 def setup_module(module):
     if DB_PATH.exists():
         DB_PATH.unlink()
