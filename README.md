@@ -11,6 +11,8 @@ The interface uses Tailwind CSS and JavaScript for a fast, modern experience tha
 - Visualize running balance over time with a dynamic line chart.
 - Sort columns in ascending or descending order with header arrows.
 - Over 150 keyword rules map common merchants to categories.
+- Generate professional-looking PDF invoices for each entry.
+- Import transactions in bulk from CSV files.
 
 
 ## Setup
@@ -34,3 +36,8 @@ pytest
 ```
 
 Transactions are stored in `transactions.db` SQLite database.
+
+### Importing CSV
+
+Upload a CSV file with columns `date,description,amount,type,category` to `/import` using the form on the homepage. An example file `sample_transactions.csv` is included with ten sample records.
+

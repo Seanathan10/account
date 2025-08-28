@@ -39,7 +39,14 @@
         </tbody>
       </table>
 
-      <h2 class="text-xl font-semibold mt-10 mb-4">Add Transaction</h2>
+      <h2 class="text-xl font-semibold mt-10 mb-4">Import CSV</h2>
+      <form action="/import" method="post" enctype="multipart/form-data" class="bg-white shadow rounded-lg p-6 space-y-4 mb-10">
+        <input type="file" name="file" accept=".csv" required class="block w-full text-sm text-gray-700" />
+        <button type="submit" class="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700">Upload</button>
+      </form>
+
+      <h2 class="text-xl font-semibold mb-4">Add Transaction</h2>
+
       <form id="tx-form" class="bg-white shadow rounded-lg p-6 space-y-4">
         <div>
           <label class="block text-sm font-medium text-gray-700">Date</label>

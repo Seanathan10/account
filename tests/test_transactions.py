@@ -8,6 +8,7 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
 from database import init_db, add_transaction, get_transactions, DB_PATH
 from categorizer import categorize
 from app import app as flask_app
+import io
 
 
 
@@ -65,4 +66,15 @@ def test_delete_transaction():
     del_resp = client.delete(f'/delete/{tx_id}')
     assert del_resp.status_code == 204
     assert all(t[0] != tx_id for t in get_transactions())
+
+
+def test_import_csv():
+    client = flask_app.test_client()
+    csv_data = 'date,description,amount,type,category\n2023-03-01,Imported Item,8,expense,Dining out\n'
+    data = {
+        'file': (io.BytesIO(csv_data.encode()), 'import.csv')
+    }
+    resp = client.post('/import', data=data, content_type='multipart/form-data')
+    assert resp.status_code == 302
+    assert any(t[2] == 'Imported Item' for t in get_transactions())
 

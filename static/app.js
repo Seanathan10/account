@@ -46,7 +46,6 @@ function attachDelete(btn) {
 
 document.querySelectorAll('.delete-btn').forEach(attachDelete);
 
-
 document.getElementById('tx-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const form = e.target;

@@ -1,6 +1,8 @@
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, jsonify, send_file
-from io import BytesIO
+from io import BytesIO, StringIO
+import csv
+
 
 from database import (
     init_db,
@@ -9,10 +11,18 @@ from database import (
     get_transaction,
     delete_transaction,
 )
-
 from categorizer import categorize, CATEGORY_TAGS
 from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Table,
+    TableStyle,
+    Paragraph,
+    Spacer,
+)
+from reportlab.lib.styles import getSampleStyleSheet
+
 
 app = Flask(__name__)
 init_db()
@@ -63,17 +73,63 @@ def invoice(tx_id: int):
     if not tx:
         return ("Not found", 404)
     buffer = BytesIO()
-    p = canvas.Canvas(buffer, pagesize=letter)
-    p.drawString(72, 720, "Invoice")
-    p.drawString(72, 700, f"Transaction ID: {tx[0]}")
-    p.drawString(72, 680, f"Date: {tx[1]}")
-    p.drawString(72, 660, f"Description: {tx[2]}")
-    p.drawString(72, 640, f"Amount: {tx[3]:.2f}")
-    p.drawString(72, 620, f"Category: {tx[4]}")
-    p.showPage()
-    p.save()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    styles = getSampleStyleSheet()
+    elements = [Paragraph("Invoice", styles["Title"]), Spacer(1, 12)]
+    data = [
+        ["Field", "Value"],
+        ["Transaction ID", tx[0]],
+        ["Date", tx[1]],
+        ["Description", tx[2]],
+        ["Category", tx[4]],
+        ["Amount", f"${abs(tx[3]):.2f}"],
+    ]
+    table = Table(data, colWidths=[150, 300])
+    table.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+                ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+            ]
+        )
+    )
+    elements.append(table)
+    elements.append(Spacer(1, 24))
+    elements.append(Paragraph("Thank you for your business.", styles["Normal"]))
+    doc.build(elements)
     buffer.seek(0)
-    return send_file(buffer, as_attachment=True, download_name="invoice.pdf", mimetype="application/pdf")
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name="invoice.pdf",
+        mimetype="application/pdf",
+    )
+
+
+@app.route("/import", methods=["POST"])
+def import_csv():
+    file = request.files.get("file")
+    if not file:
+        return redirect("/")
+    stream = StringIO(file.stream.read().decode("utf-8"))
+    reader = csv.DictReader(stream)
+    for row in reader:
+        date = row.get("date") or datetime.now().strftime("%Y-%m-%d")
+        description = row.get("description", "")
+        try:
+            amount = float(row.get("amount", 0))
+        except ValueError:
+            continue
+        tx_type = row.get("type", "expense").lower()
+        amount = abs(amount) if tx_type == "income" else -abs(amount)
+        category = row.get("category") or categorize(description)
+        add_transaction(date, description, amount, category)
+    return redirect("/")
+
 
 
 @app.route("/delete/<int:tx_id>", methods=["DELETE"]) 
