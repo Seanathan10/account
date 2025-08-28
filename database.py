@@ -59,3 +59,13 @@ def get_transactions():
     rows = cur.fetchall()
     conn.close()
     return rows
+
+
+def delete_transaction(tx_id: int) -> None:
+    """Remove a transaction from the database."""
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    cur.execute("DELETE FROM transactions WHERE id=?", (tx_id,))
+    conn.commit()
+    conn.close()
+

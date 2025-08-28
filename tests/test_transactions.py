@@ -34,6 +34,10 @@ def test_add_and_list():
 def test_categorize():
     assert categorize('Morning coffee') == 'Dining out'
     assert categorize('Unknown purchase') == 'Uncategorized'
+    assert categorize('Chevron Gas') == 'Fuel'
+    assert categorize('Safeway Store') == 'Groceries'
+    assert categorize('AAA Insurance') == 'Insurance premiums'
+
 
 
 def test_add_via_json_and_invoice():
@@ -52,3 +56,13 @@ def test_add_via_json_and_invoice():
     inv = client.get(f"/invoice/{data['id']}")
     assert inv.status_code == 200
     assert inv.headers['Content-Type'] == 'application/pdf'
+
+
+def test_delete_transaction():
+    client = flask_app.test_client()
+    resp = client.post('/add', json={'description': 'Temp item', 'amount': 5.0, 'type': 'expense'})
+    tx_id = resp.get_json()['id']
+    del_resp = client.delete(f'/delete/{tx_id}')
+    assert del_resp.status_code == 204
+    assert all(t[0] != tx_id for t in get_transactions())
+

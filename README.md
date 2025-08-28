@@ -5,11 +5,12 @@ The interface uses Tailwind CSS and JavaScript for a fast, modern experience tha
 
 ## Features
 
-
 - Add income and expense transactions manually.
-- Display transactions in a sortable table with invoice PDF links.
+- Display transactions in a sortable table with invoice PDF links and deletion.
 - Auto-categorize transactions based on simple keyword rules and selectable tags.
 - Visualize running balance over time with a dynamic line chart.
+- Sort columns in ascending or descending order with header arrows.
+- Over 150 keyword rules map common merchants to categories.
 
 
 ## Setup

@@ -31,6 +31,22 @@ function updateChart() {
 
 updateChart();
 
+function attachDelete(btn) {
+  btn.addEventListener('click', async () => {
+    const id = parseInt(btn.dataset.id);
+    const resp = await fetch(`/delete/${id}`, { method: 'DELETE' });
+    if (resp.ok) {
+      const idx = txData.findIndex(t => t.id === id);
+      if (idx !== -1) txData.splice(idx, 1);
+      btn.closest('tr').remove();
+      updateChart();
+    }
+  });
+}
+
+document.querySelectorAll('.delete-btn').forEach(attachDelete);
+
+
 document.getElementById('tx-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const form = e.target;
@@ -52,31 +68,64 @@ document.getElementById('tx-form').addEventListener('submit', async (e) => {
     txData.push(tx);
     const tbody = document.getElementById('tx-body');
     const tr = document.createElement('tr');
-    tr.innerHTML = `\n      <td class="px-4 py-2 whitespace-nowrap">${tx.date}</td>\n      <td class="px-4 py-2 whitespace-nowrap">${tx.description}</td>\n      <td class="px-4 py-2 whitespace-nowrap">${tx.amount.toFixed(2)}</td>\n      <td class="px-4 py-2 whitespace-nowrap">${tx.category}</td>\n      <td class="px-4 py-2 whitespace-nowrap"><a href="/invoice/${tx.id}" target="_blank" class="text-blue-600">Invoice</a></td>\n    `;
+    tr.innerHTML = `\n      <td class="px-4 py-2 whitespace-nowrap">${tx.date}</td>\n      <td class="px-4 py-2 whitespace-nowrap">${tx.description}</td>\n      <td class="px-4 py-2 whitespace-nowrap">${tx.amount.toFixed(2)}</td>\n      <td class="px-4 py-2 whitespace-nowrap">${tx.category}</td>\n      <td class="px-4 py-2 whitespace-nowrap"><a href="/invoice/${tx.id}" target="_blank" class="text-blue-600">Invoice</a> <button data-id="${tx.id}" class="delete-btn text-red-600 ml-2">Delete</button></td>\n    `;
     tbody.prepend(tr);
+    attachDelete(tr.querySelector('.delete-btn'));
+
     updateChart();
     form.reset();
   }
 });
 
+let sortState = { col: null, dir: 1 };
+
+function updateSortIcons() {
+  document.querySelectorAll('th[data-index]').forEach(th => {
+    const idx = parseInt(th.dataset.index) - 1;
+    const icon = th.querySelector('.sort-icon');
+    if (!icon) return;
+    if (sortState.col === idx) {
+      icon.textContent = sortState.dir === 1 ? '▲' : '▼';
+    } else {
+      icon.textContent = '';
+    }
+  });
+}
+
+function sortTable(idx) {
+  const tbody = document.getElementById('tx-body');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  rows.sort((a, b) => {
+    const av = a.children[idx].innerText;
+    const bv = b.children[idx].innerText;
+    let res;
+    if (idx === 0) {
+      res = new Date(av) - new Date(bv);
+    } else if (idx === 2) {
+      res = parseFloat(av) - parseFloat(bv);
+    } else {
+      res = av.localeCompare(bv);
+    }
+    return res * sortState.dir;
+  });
+  tbody.innerHTML = '';
+  rows.forEach(r => tbody.appendChild(r));
+}
+
 document.querySelectorAll('th[data-index]').forEach(th => {
   th.addEventListener('click', () => {
     const idx = parseInt(th.dataset.index) - 1;
-    const tbody = document.getElementById('tx-body');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
-    rows.sort((a, b) => {
-      const av = a.children[idx].innerText;
-      const bv = b.children[idx].innerText;
-      if (idx === 0) {
-        return new Date(av) - new Date(bv);
-      }
-      if (idx === 2) {
-        return parseFloat(av) - parseFloat(bv);
-      }
-      return av.localeCompare(bv);
-    });
-    tbody.innerHTML = '';
-    rows.forEach(r => tbody.appendChild(r));
+    if (sortState.col === idx) {
+      sortState.dir *= -1;
+    } else {
+      sortState.col = idx;
+      sortState.dir = 1;
+    }
+    sortTable(idx);
+    updateSortIcons();
   });
 });
+
+updateSortIcons();
+
 

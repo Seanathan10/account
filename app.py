@@ -2,11 +2,17 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, jsonify, send_file
 from io import BytesIO
 
-from database import init_db, add_transaction, get_transactions, get_transaction
+from database import (
+    init_db,
+    add_transaction,
+    get_transactions,
+    get_transaction,
+    delete_transaction,
+)
+
 from categorizer import categorize, CATEGORY_TAGS
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-
 
 app = Flask(__name__)
 init_db()
@@ -43,7 +49,6 @@ def add():
     date = request.form.get("date") or datetime.now().strftime("%Y-%m-%d")
     description = request.form["description"]
     amount = float(request.form["amount"])
-
     tx_type = request.form.get("type", "expense")
     amount = abs(amount) if tx_type == "income" else -abs(amount)
 
@@ -69,6 +74,12 @@ def invoice(tx_id: int):
     p.save()
     buffer.seek(0)
     return send_file(buffer, as_attachment=True, download_name="invoice.pdf", mimetype="application/pdf")
+
+
+@app.route("/delete/<int:tx_id>", methods=["DELETE"]) 
+def delete(tx_id: int):
+    delete_transaction(tx_id)
+    return ("", 204)
 
 
 
