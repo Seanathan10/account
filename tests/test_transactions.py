@@ -10,6 +10,7 @@ from categorizer import categorize
 from app import app as flask_app
 
 
+
 def setup_module(module):
     if DB_PATH.exists():
         DB_PATH.unlink()
@@ -43,3 +44,4 @@ def test_add_via_json():
     assert data['description'] == 'Book'
     assert data['category'] == 'Uncategorized'
     assert any(t[0] == data['id'] for t in get_transactions())
+

@@ -24,6 +24,7 @@ def init_db():
 
 def add_transaction(date: str, description: str, amount: float, category: str) -> int:
     """Insert a transaction and return its database id."""
+
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     cur.execute(

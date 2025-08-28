@@ -7,6 +7,7 @@ The interface uses Tailwind CSS and JavaScript for a fast, modern experience tha
 
 - Add transactions manually.
 - Display transactions in a modern web interface.
+
 - Auto-categorize transactions based on simple keyword rules.
 
 ## Setup
