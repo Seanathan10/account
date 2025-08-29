@@ -1,0 +1,11 @@
+date,description,amount,type,category
+2023-01-01,Salary,3000,income,Product sales
+2023-01-02,Office rent,1200,expense,Rent or lease payments
+2023-01-03,Coffee shop,4,expense,Dining out
+2023-01-04,Book sale,25,income,Product sales
+2023-01-05,Uber ride,15,expense,Public transit costs
+2023-01-06,Electricity bill,60,expense,Electricity
+2023-01-07,Internet subscription,45,expense,Internet
+2023-01-08,Consulting income,500,income,Service fees
+2023-01-09,Groceries,90,expense,Groceries
+2023-01-10,Gym membership,50,expense,Hobbies
