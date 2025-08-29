@@ -68,4 +68,3 @@ def delete_transaction(tx_id: int) -> None:
     cur.execute("DELETE FROM transactions WHERE id=?", (tx_id,))
     conn.commit()
     conn.close()
-
