@@ -29,7 +29,41 @@ function updateChart() {
   chart.update();
 }
 
+function computeTotals() {
+  let spent = 0, received = 0;
+  const catTotals = {};
+  txData.forEach(t => {
+    if (t.amount < 0) {
+      const amt = -t.amount;
+      spent += amt;
+      const cat = t.category || 'Uncategorized';
+      catTotals[cat] = (catTotals[cat] || 0) + amt;
+    } else {
+      received += t.amount;
+    }
+  });
+  return { spent, received, net: received - spent, catTotals };
+}
+
+function updateSummary() {
+  const { spent, received, net, catTotals } = computeTotals();
+  document.getElementById('total-spent').textContent = `$${spent.toFixed(2)}`;
+  document.getElementById('total-received').textContent = `$${received.toFixed(2)}`;
+  document.getElementById('net-balance').textContent = `$${net.toFixed(2)}`;
+  const list = document.getElementById('category-list');
+  if (list) {
+    list.innerHTML = '';
+    Object.entries(catTotals).sort((a, b) => b[1] - a[1]).forEach(([cat, amt]) => {
+      const li = document.createElement('li');
+      li.textContent = `${cat}: $${amt.toFixed(2)}`;
+      list.appendChild(li);
+    });
+  }
+}
+
 updateChart();
+updateSummary();
+
 
 function attachDelete(btn) {
   btn.addEventListener('click', async () => {
@@ -40,6 +74,8 @@ function attachDelete(btn) {
       if (idx !== -1) txData.splice(idx, 1);
       btn.closest('tr').remove();
       updateChart();
+      updateSummary();
+
     }
   });
 }
@@ -70,8 +106,9 @@ document.getElementById('tx-form').addEventListener('submit', async (e) => {
     tr.innerHTML = `\n      <td class="px-4 py-2 whitespace-nowrap">${tx.date}</td>\n      <td class="px-4 py-2 whitespace-nowrap">${tx.description}</td>\n      <td class="px-4 py-2 whitespace-nowrap">${tx.amount.toFixed(2)}</td>\n      <td class="px-4 py-2 whitespace-nowrap">${tx.category}</td>\n      <td class="px-4 py-2 whitespace-nowrap"><a href="/invoice/${tx.id}" target="_blank" class="text-blue-600">Invoice</a> <button data-id="${tx.id}" class="delete-btn text-red-600 ml-2">Delete</button></td>\n    `;
     tbody.prepend(tr);
     attachDelete(tr.querySelector('.delete-btn'));
-
     updateChart();
+    updateSummary();
+
     form.reset();
   }
 });

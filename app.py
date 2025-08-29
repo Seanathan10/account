@@ -30,7 +30,23 @@ init_db()
 @app.route("/", methods=["GET"])
 def index():
     transactions = get_transactions()
-    return render_template("index.html", transactions=transactions, categories=CATEGORY_TAGS)
+    total_spent = sum(-t[3] for t in transactions if t[3] < 0)
+    total_received = sum(t[3] for t in transactions if t[3] > 0)
+    net = total_received - total_spent
+    category_totals = {}
+    for t in transactions:
+        if t[3] < 0:
+            category_totals[t[4]] = category_totals.get(t[4], 0) + (-t[3])
+    return render_template(
+        "index.html",
+        transactions=transactions,
+        categories=CATEGORY_TAGS,
+        total_spent=total_spent,
+        total_received=total_received,
+        net=net,
+        cat_totals=category_totals,
+    )
+
 
 
 @app.route("/add", methods=["POST"])
