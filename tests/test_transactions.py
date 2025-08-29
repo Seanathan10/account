@@ -11,6 +11,7 @@ from app import app as flask_app
 import io
 
 
+
 def setup_module(module):
     if DB_PATH.exists():
         DB_PATH.unlink()
@@ -37,6 +38,7 @@ def test_categorize():
     assert categorize('Chevron Gas') == 'Fuel'
     assert categorize('Safeway Store') == 'Groceries'
     assert categorize('AAA Insurance') == 'Insurance premiums'
+
 
 
 def test_add_via_json_and_invoice():
@@ -75,3 +77,4 @@ def test_import_csv():
     resp = client.post('/import', data=data, content_type='multipart/form-data')
     assert resp.status_code == 302
     assert any(t[2] == 'Imported Item' for t in get_transactions())
+

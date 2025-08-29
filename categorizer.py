@@ -327,6 +327,7 @@ RULES.update({k: "Car payments" for k in [
 ]})
 
 
+
 def categorize(description: str) -> str:
     desc = description.lower()
     for keyword, category in RULES.items():

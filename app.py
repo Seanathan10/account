@@ -47,6 +47,7 @@ def index():
     )
 
 
+
 @app.route("/add", methods=["POST"])
 def add():
     data = request.get_json(silent=True)
@@ -147,5 +148,7 @@ def delete(tx_id: int):
     return ("", 204)
 
 
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000)
+
