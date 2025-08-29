@@ -2,3 +2,5 @@ Flask==2.3.2
 Werkzeug<3
 pytest==7.4.2
 reportlab==3.6.12
+gunicorn
+
