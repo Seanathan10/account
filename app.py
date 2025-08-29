@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, jsonify, send_file
 from io import BytesIO, StringIO
 import csv
 
+
 from database import (
     init_db,
     add_transaction,
@@ -45,6 +46,7 @@ def index():
         net=net,
         cat_totals=category_totals,
     )
+
 
 
 @app.route("/add", methods=["POST"])
@@ -147,5 +149,6 @@ def delete(tx_id: int):
     return ("", 204)
 
 
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000)

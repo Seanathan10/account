@@ -1,3 +1,4 @@
+
 const txData = window.transactionsData.map(t => ({
   id: t[0],
   date: t[1],
@@ -63,6 +64,7 @@ function updateSummary() {
 updateChart();
 updateSummary();
 
+
 function attachDelete(btn) {
   btn.addEventListener('click', async () => {
     const id = parseInt(btn.dataset.id);
@@ -73,6 +75,7 @@ function attachDelete(btn) {
       btn.closest('tr').remove();
       updateChart();
       updateSummary();
+
     }
   });
 }
@@ -87,6 +90,7 @@ document.getElementById('tx-form').addEventListener('submit', async (e) => {
     description: form.description.value,
     amount: parseFloat(form.amount.value),
     type: form.type.value,
+
     category: form.category.value,
   };
   const resp = await fetch('/add', {
@@ -104,6 +108,7 @@ document.getElementById('tx-form').addEventListener('submit', async (e) => {
     attachDelete(tr.querySelector('.delete-btn'));
     updateChart();
     updateSummary();
+
     form.reset();
   }
 });
@@ -158,4 +163,5 @@ document.querySelectorAll('th[data-index]').forEach(th => {
 });
 
 updateSortIcons();
+
 
